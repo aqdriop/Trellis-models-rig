@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TRELLIS + Auto-Rigging · Cuaderno de Google Colab</title>
+  <meta name="description" content="Descarga el cuaderno de Google Colab que convierte una imagen en un modelo 3D con Microsoft TRELLIS y exporta un GLB con esqueleto y pesos de skinning mediante Blender.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#4f46e5">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="TRELLIS + Auto-Rigging · Cuaderno de Google Colab">
+  <meta property="og:description" content="De una imagen a un modelo 3D con esqueleto, en Google Colab. Descarga el ZIP del cuaderno.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="#top" aria-label="TRELLIS Auto-Rigging, inicio">
+        <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <rect width="64" height="64" rx="15" fill="#4f46e5"/>
+          <path d="M21 43 43 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="19" cy="45" r="7" fill="#fff"/>
+          <circle cx="45" cy="19" r="7" fill="#fff"/>
+        </svg>
+        <span>TRELLIS · Auto-Rig</span>
+      </a>
+      <nav class="nav" aria-label="Secciones">
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#requisitos">Requisitos</a>
+        <a href="#verificar">Verificar</a>
+        <a class="nav-gh" href="https://github.com/aqdriop/Trellis-models-rig" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <section class="hero" id="top">
+      <div class="container">
+        <div class="hero-copy">
+          <p class="eyebrow">Google Colab · Microsoft TRELLIS · Blender</p>
+          <h1>De una imagen a un modelo 3D <span class="grad">con esqueleto</span></h1>
+          <p class="lead">Un cuaderno de Colab listo para ejecutar: genera el modelo con TRELLIS y exporta un GLB con armature y pesos de skinning usando Blender. No instalas nada en tu equipo.</p>
+
+          <div class="cta">
+            <a class="btn btn-primary" id="download-btn" href="downloads/trellis-autorig-colab.zip" download="trellis-autorig-colab.zip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>
+              Descargar ZIP del cuaderno
+            </a>
+            <a class="btn btn-ghost" id="colab-link" href="https://colab.research.google.com/github/aqdriop/Trellis-models-rig/blob/v0.1.0/colab/TRELLIS_AutoRig_Colab.ipynb" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
+              Abrir en Colab
+            </a>
+          </div>
+
+          <p class="file-meta">
+            <code>trellis-autorig-colab.zip</code>
+            <span class="dot" id="meta-size" hidden></span>
+            <span class="dot" id="meta-version" hidden></span>
+          </p>
+          <p class="status" id="download-status" role="status" aria-live="polite"></p>
+          <p class="alt-links">También publicado en <a href="https://github.com/aqdriop/Trellis-models-rig/releases/latest" rel="noopener">GitHub Releases</a> · <a href="https://github.com/aqdriop/Trellis-models-rig" rel="noopener">código fuente</a></p>
+        </div>
+
+        <figure class="pipeline" aria-label="Flujo del cuaderno">
+          <svg class="pipe" viewBox="0 0 640 304" role="img" aria-labelledby="pipe-title pipe-desc">
+            <title id="pipe-title">De la imagen al modelo con esqueleto</title>
+            <desc id="pipe-desc">Tres etapas: una imagen de un personaje, su malla 3D con textura generada por TRELLIS y el mismo modelo con esqueleto y pesos añadidos por Blender.</desc>
+            <defs>
+              <clipPath id="panel-clip"><rect width="176" height="224" rx="16"/></clipPath>
+              <pattern id="tri" width="13" height="13" patternUnits="userSpaceOnUse">
+                <path class="tri-line" d="M0 0 13 13M13 0 0 13M0 6.5H13M6.5 0V13"/>
+              </pattern>
+              <g id="body-shapes">
+                <circle cx="50" cy="16" r="12"/>
+                <rect x="31" y="32" width="38" height="54" rx="13"/>
+                <rect x="-6" y="0" width="12" height="52" rx="6" transform="translate(28 42) rotate(14)"/>
+                <rect x="-6" y="0" width="12" height="52" rx="6" transform="translate(72 42) rotate(-14)"/>
+                <rect x="-7" y="0" width="14" height="72" rx="7" transform="translate(41 82) rotate(4)"/>
+                <rect x="-7" y="0" width="14" height="72" rx="7" transform="translate(59 82) rotate(-4)"/>
+              </g>
+              <g id="bones">
+                <path d="M50 16V84"/>
+                <path d="M29 42H71"/>
+                <path d="M29 42 22 67 15.5 92.5"/>
+                <path d="M71 42 78 67 84.5 92.5"/>
+                <path d="M41 84H59"/>
+                <path d="M41 84 38.5 120 36 155.5"/>
+                <path d="M59 84 61.5 120 64 155.5"/>
+              </g>
+              <g id="joints">
+                <circle cx="50" cy="16" r="3.4"/>
+                <circle cx="50" cy="30" r="3.4"/>
+                <circle cx="29" cy="42" r="3.4"/>
+                <circle cx="71" cy="42" r="3.4"/>
+                <circle cx="22" cy="67" r="3.4"/>
+                <circle cx="78" cy="67" r="3.4"/>
+                <circle cx="15.5" cy="92.5" r="3.4"/>
+                <circle cx="84.5" cy="92.5" r="3.4"/>
+                <circle cx="50" cy="58" r="3.4"/>
+                <circle cx="50" cy="84" r="3.4"/>
+                <circle cx="41" cy="84" r="3.4"/>
+                <circle cx="59" cy="84" r="3.4"/>
+                <circle cx="38.5" cy="120" r="3.4"/>
+                <circle cx="61.5" cy="120" r="3.4"/>
+                <circle cx="36" cy="155.5" r="3.4"/>
+                <circle cx="64" cy="155.5" r="3.4"/>
+              </g>
+            </defs>
+
+            <g transform="translate(12 14)">
+              <rect class="panel" width="176" height="224" rx="16"/>
+              <g clip-path="url(#panel-clip)">
+                <circle class="sun" cx="140" cy="46" r="11"/>
+                <path class="hill" d="M0 196C40 168 86 178 120 194S160 196 176 186V224H0Z"/>
+              </g>
+              <g transform="translate(30.5 20) scale(1.15)"><use href="#body-shapes" class="fig-solid"/></g>
+            </g>
+
+            <path class="arrow" d="M200 114 214 126 200 138"/>
+
+            <g transform="translate(232 14)">
+              <rect class="panel" width="176" height="224" rx="16"/>
+              <g transform="translate(30.5 20) scale(1.15)"><use href="#body-shapes" class="fig-mesh"/></g>
+            </g>
+
+            <path class="arrow" d="M420 114 434 126 420 138"/>
+
+            <g transform="translate(452 14)">
+              <rect class="panel" width="176" height="224" rx="16"/>
+              <g transform="translate(30.5 20) scale(1.15)">
+                <use href="#body-shapes" class="fig-ghost"/>
+                <use href="#bones" class="bone"/>
+                <use href="#joints" class="joint"/>
+              </g>
+            </g>
+
+            <text class="cap" x="100" y="268" text-anchor="middle">Imagen</text>
+            <text class="cap-sub" x="100" y="289" text-anchor="middle">tu punto de partida</text>
+            <text class="cap" x="320" y="268" text-anchor="middle">Malla + textura</text>
+            <text class="cap-sub" x="320" y="289" text-anchor="middle">TRELLIS</text>
+            <text class="cap" x="540" y="268" text-anchor="middle">Esqueleto + skin</text>
+            <text class="cap-sub" x="540" y="289" text-anchor="middle">Blender · GLB</text>
+          </svg>
+        </figure>
+      </div>
+    </section>
+
+    <section id="como-funciona" aria-labelledby="h-pasos">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="h-pasos">Cuatro pasos</h2>
+          <p>Del ZIP al GLB riggeado, todo desde el navegador.</p>
+        </div>
+        <ol class="steps">
+          <li class="card">
+            <h3>Descarga y descomprime</h3>
+            <p>Pulsa el botón y extrae <code>trellis-autorig-colab.zip</code>: dentro están el cuaderno y una guía (<code>LEEME.md</code>).</p>
+          </li>
+          <li class="card">
+            <h3>Súbelo a Colab</h3>
+            <p>En <strong>colab.research.google.com</strong>: <em>Archivo → Subir cuaderno</em>. O usa directamente el botón «Abrir en Colab».</p>
+          </li>
+          <li class="card">
+            <h3>Elige GPU y ejecuta</h3>
+            <p><em>Entorno de ejecución → Cambiar tipo → GPU</em> y «Ejecutar todas». La primera instalación puede tardar 15–25 min.</p>
+          </li>
+          <li class="card">
+            <h3>Genera tu GLB</h3>
+            <p>Abre el enlace de Gradio, sube una imagen, marca <strong>Enable Auto-Rigging</strong>, pulsa <strong>Extract GLB</strong> y descárgalo.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="incluye" aria-labelledby="h-incluye">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="h-incluye">Qué hace el cuaderno</h2>
+          <p>Automatiza la parte difícil: un entorno compatible con TRELLIS, la compilación para tu GPU y Blender en modo headless.</p>
+        </div>
+        <div class="grid-2">
+          <article class="card feature">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 12.5 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg></div>
+            <h3>Entorno aislado</h3>
+            <p>Crea Python 3.10 con PyTorch 2.4 y CUDA 12.1 aparte. No toca el entorno de Colab, que hoy trae Python 3.13 y CUDA 13.</p>
+          </article>
+          <article class="card feature">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/></svg></div>
+            <h3>TRELLIS: imagen a 3D</h3>
+            <p>Usa el pipeline oficial de Microsoft TRELLIS (commit fijado) y su exportación a GLB con textura.</p>
+          </article>
+          <article class="card feature">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8 16 8-8M12 12l4.3 4.3"/></svg></div>
+            <h3>Auto-rig con Blender 4.5 LTS</h3>
+            <p>Armature humanoide aproximada con pesos automáticos, exportada como GLB con skin y materiales.</p>
+          </article>
+          <article class="card feature">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+            <h3>Versiones fijadas</h3>
+            <p>Dependencias con lockfile, Blender verificado con SHA-256 y una comprobación final de GPU e importaciones antes de arrancar.</p>
+          </article>
+        </div>
+
+        <div class="card zip-card">
+          <h3>Contenido del ZIP</h3>
+          <p>Una carpeta <code>trellis-autorig-colab/</code> con dos archivos. El cuaderno descarga el resto (app, scripts, TRELLIS y Blender) desde GitHub al ejecutarse.</p>
+          <ul class="contents" id="zip-contents">
+            <li><code>TRELLIS_AutoRig_Colab.ipynb</code> <span class="desc">el cuaderno de Colab</span></li>
+            <li><code>LEEME.md</code> <span class="desc">guía de uso y solución de problemas</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="requisitos" aria-labelledby="h-requisitos">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="h-requisitos">Requisitos y límites</h2>
+          <p>Conviene saberlo antes de empezar.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Necesitas</h3>
+            <ul class="checks">
+              <li><strong>Una cuenta de Google</strong> para usar Colab.</li>
+              <li><strong>Una GPU NVIDIA con unos 16 GB.</strong> La T4 gratuita (15 GB) va justa; L4, A100 o H100 van mejor.</li>
+              <li><strong>Paciencia la primera vez:</strong> 15–25 minutos de instalación, más la descarga de los pesos del modelo.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Ten en cuenta</h3>
+            <ul class="cautions">
+              <li><strong>GPU Blackwell («G4») no compatible</strong> con PyTorch 2.4 / CUDA 12.1.</li>
+              <li><strong>El rig es una plantilla geométrica</strong>, no detecta articulaciones: es un punto de partida para personajes verticales.</li>
+              <li><strong>El enlace público de Gradio</strong> lo puede usar cualquiera que lo tenga mientras la app esté activa.</li>
+              <li><strong>Colab es efímero:</strong> descarga el GLB antes de parar la sesión.</li>
+            </ul>
+          </div>
+        </div>
+        <p class="note"><strong>¿Algo falla?</strong> La instalación fija versiones, pero Colab cambia su entorno a menudo. Abre un <a href="https://github.com/aqdriop/Trellis-models-rig/issues" rel="noopener">issue en GitHub</a> con el registro que el cuaderno guarda en <code>/content/setup_logs/</code>.</p>
+      </div>
+    </section>
+
+    <section id="verificar" aria-labelledby="h-verificar">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="h-verificar">Verifica la descarga</h2>
+          <p>El mismo ZIP está publicado en el repositorio de GitHub del proyecto. Compara su huella SHA-256 con esta.</p>
+        </div>
+        <div class="card">
+          <div class="hash-box">
+            <code id="sha-value">Cargando…</code>
+            <button class="btn btn-small" id="copy-sha" type="button" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+              <span id="copy-label">Copiar</span>
+            </button>
+          </div>
+          <noscript><p>Activa JavaScript para ver la huella aquí, o consulta <a href="downloads/manifest.json">downloads/manifest.json</a>.</p></noscript>
+          <dl class="facts">
+            <div><dt>Archivo</dt><dd><code>trellis-autorig-colab.zip</code></dd></div>
+            <div><dt>Tamaño</dt><dd id="fact-size">—</dd></div>
+            <div><dt>Versión</dt><dd id="fact-version">—</dd></div>
+            <div><dt>Actualizado</dt><dd id="fact-updated">—</dd></div>
+          </dl>
+          <p class="alt-links">En Linux o macOS: <code>shasum -a 256 trellis-autorig-colab.zip</code> · En Windows: <code>certutil -hashfile trellis-autorig-colab.zip SHA256</code></p>
+          <p class="alt-links"><a id="release-link" href="https://github.com/aqdriop/Trellis-models-rig/raw/v0.1.0/portal/downloads/trellis-autorig-colab.zip" rel="noopener">Descargar el mismo ZIP desde GitHub</a></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Capa de integración TRELLIS + auto-rigging para Colab. TRELLIS es un proyecto de Microsoft y Blender es una marca de la Blender Foundation; este portal no está afiliado a ellos y no redistribuye su código ni sus pesos.</p>
+      <ul aria-label="Enlaces">
+        <li><a href="https://github.com/aqdriop/Trellis-models-rig" rel="noopener">Repositorio</a></li>
+        <li><a href="https://github.com/aqdriop/Trellis-models-rig/releases" rel="noopener">Releases</a></li>
+        <li><a href="https://github.com/microsoft/TRELLIS" rel="noopener">Microsoft TRELLIS</a></li>
+        <li><a href="https://www.blender.org" rel="noopener">Blender</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+# Dependencias de Python del entorno aislado del cuaderno de Colab
+# (Python 3.10, Linux x86_64). Fuente del lockfile requirements-colab.lock.
+#
+# Quedan fuera, porque se instalan por separado en setup_colab.sh:
+#   - torch / torchvision (índice de PyTorch para CUDA 12.1) y xformers
+#   - diff-gaussian-rasterization y nvdiffrast (se compilan contra torch)
+#
+# Regenerar el lockfile (no necesita GPU):
+#   uv pip compile colab/requirements-colab.in --python-version 3.10 \
+#       --python-platform x86_64-manylinux_2_28 --no-annotate \
+#       -o colab/requirements-colab.lock
+
+# Herramientas de build: versión contemporánea de torch 2.4 / TRELLIS, porque las
+# extensiones se compilan sin aislamiento de build (usan el setuptools del entorno).
+setuptools<76
+wheel
+
+# --- TRELLIS: lo que instala `setup.sh --basic` ---
+pillow
+imageio
+imageio-ffmpeg
+tqdm
+easydict
+opencv-python-headless
+scipy
+ninja
+rembg
+onnxruntime
+trimesh
+open3d
+xatlas
+pyvista
+pymeshfix
+igraph
+# transformers solo se importa (trellis.pipelines carga también el pipeline de texto);
+# se acota a la época del modelo para que sea compatible con torch 2.4.0.
+transformers<4.50
+utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8
+# `setup.sh --spconv` instala el paquete cu120 para cualquier CUDA 12.x
+spconv-cu120
+
+# --- Interfaz y wrapper de rigging de este repositorio (= requirements.txt) ---
+# No se usa `setup.sh --demo` (gradio==4.44.1): con huggingface_hub >= 1 no importa y con
+# pydantic reciente falla al generar la API. requirements.txt resuelve a Gradio 5.x.
+gradio>=4.44,<6
+numpy>=1.23,<2
+Pillow>=10
+imageio>=2.34
+imageio-ffmpeg>=0.5
