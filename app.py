@@ -5,7 +5,10 @@ installed separately. Set TRELLIS_ROOT if the checkout is not the current
 working directory.
 """
 
-from __future__ import annotations
+# No añadir `from __future__ import annotations` en este módulo: Gradio resuelve la
+# anotación `request: gr.Request` con typing.get_type_hints() y `gr` es una variable
+# local de build_demo(), así que con anotaciones diferidas la interfaz no se construye
+# (NameError: name 'gr' is not defined). Lo cubre tests/test_app_ui.py.
 
 import argparse
 import hashlib
