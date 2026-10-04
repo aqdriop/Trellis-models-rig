@@ -1,0 +1,7 @@
+# Interfaz de esta capa de integración. Instala TRELLIS primero con su setup.sh
+# para conservar la combinación correcta de PyTorch, CUDA y extensiones nativas.
+gradio>=4.44,<6
+numpy>=1.23,<2
+Pillow>=10
+imageio>=2.34
+imageio-ffmpeg>=0.5
