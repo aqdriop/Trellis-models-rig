@@ -102,9 +102,9 @@ class PortalPageTests(unittest.TestCase):
         with zipfile.ZipFile(target) as archive:
             self.assertIn(build.BUNDLE_NAME + "/TRELLIS_AutoRig_Colab.ipynb", archive.namelist())
 
-    def test_colab_and_release_links_match_the_manifest(self):
+    def test_colab_and_github_download_links_match_the_manifest(self):
         self.assertEqual(self.page.attrs_by_id["colab-link"]["href"], self.manifest["colab_url"])
-        self.assertEqual(self.page.attrs_by_id["release-link"]["href"], self.manifest["release_asset"])
+        self.assertEqual(self.page.attrs_by_id["release-link"]["href"], self.manifest["download_url"])
 
     def test_local_references_exist(self):
         checked = 0

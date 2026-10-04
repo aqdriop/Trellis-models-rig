@@ -91,8 +91,8 @@
       colab.href = manifest.colab_url;
     }
     var release = byId('release-link');
-    if (release && startsWithOneOf(manifest.release_asset, ['https://github.com/'])) {
-      release.href = manifest.release_asset;
+    if (release && startsWithOneOf(manifest.download_url, ['https://github.com/'])) {
+      release.href = manifest.download_url;
     }
 
     var copy = byId('copy-sha');

@@ -58,7 +58,14 @@ class PublishedBundleTests(unittest.TestCase):
         self.assertEqual(manifest["tag"], "v" + build.BUNDLE_VERSION)
         self.assertEqual(manifest["colab_url"], build.colab_url())
         self.assertTrue(manifest["colab_url"].startswith("https://colab.research.google.com/github/"))
-        self.assertTrue(manifest["release_asset"].endswith("/releases/latest/download/" + build.ZIP_NAME))
+        self.assertEqual(manifest["download_url"], build.download_url())
+        self.assertTrue(
+            manifest["download_url"].endswith(
+                "/raw/v%s/portal/downloads/%s" % (build.BUNDLE_VERSION, build.ZIP_NAME)
+            )
+        )
+        self.assertEqual(manifest["release_url"], build.release_url())
+        self.assertNotIn("release_asset", manifest)  # el ZIP no es un archivo adjunto de la release
         paths = [entry["path"] for entry in manifest["contents"]]
         self.assertEqual(paths[0], NAME + "/TRELLIS_AutoRig_Colab.ipynb")
 

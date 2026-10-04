@@ -60,6 +60,15 @@ def bundle_date() -> str:
     return "%04d-%02d-%02d" % BUNDLE_DATE
 
 
+def download_url() -> str:
+    """Descarga directa del ZIP versionado en el repositorio, fijada a la etiqueta de la versión."""
+    return "https://github.com/%s/raw/%s/portal/downloads/%s" % (GITHUB_REPO, version_tag(), ZIP_NAME)
+
+
+def release_url() -> str:
+    return "https://github.com/%s/releases/tag/%s" % (GITHUB_REPO, version_tag())
+
+
 def colab_url() -> str:
     return "https://colab.research.google.com/github/%s/blob/%s/%s" % (
         GITHUB_REPO,
@@ -154,7 +163,8 @@ def manifest_for(zip_bytes: bytes) -> Dict[str, object]:
         "contents": _contents_in_source_order(zip_bytes),
         "colab_url": colab_url(),
         "github": "https://github.com/" + GITHUB_REPO,
-        "release_asset": "https://github.com/%s/releases/latest/download/%s" % (GITHUB_REPO, ZIP_NAME),
+        "download_url": download_url(),
+        "release_url": release_url(),
     }
 
 
