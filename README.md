@@ -61,10 +61,44 @@ python -c "from rigging import auto_rig_glb; print(auto_rig_glb('modelo.glb', 'm
 
 El script de Blender utilizado por el wrapper está en `scripts/auto_rig_glb.py`. El wrapper informa explícitamente si Blender falta, agota el tiempo de espera o no puede generar el archivo; no devuelve silenciosamente un GLB sin rig cuando la casilla está activada.
 
+## Colab y portal de descarga
+
+Para ejecutar todo en Google Colab, sin instalar nada en tu equipo, el repositorio incluye:
+
+- **Cuaderno de Colab**: [`colab/TRELLIS_AutoRig_Colab.ipynb`](colab/TRELLIS_AutoRig_Colab.ipynb) ([ábrelo en Colab](https://colab.research.google.com/github/aqdriop/Trellis-models-rig/blob/v0.1.0/colab/TRELLIS_AutoRig_Colab.ipynb)). Clona este repositorio, ejecuta [`colab/setup_colab.sh`](colab/setup_colab.sh) y lanza `app.py` con un enlace público de Gradio.
+- **ZIP del cuaderno**: [`portal/downloads/trellis-autorig-colab.zip`](portal/downloads/trellis-autorig-colab.zip) (cuaderno + `LEEME.md`), publicado también como archivo de la [release](https://github.com/aqdriop/Trellis-models-rig/releases/latest): [descarga directa](https://github.com/aqdriop/Trellis-models-rig/releases/latest/download/trellis-autorig-colab.zip).
+- **Portal web** para Netlify: sitio estático en [`portal/`](portal/) con el botón de descarga del ZIP, configurado en [`netlify.toml`](netlify.toml).
+
+El runtime actual de Colab (Python 3.13, CUDA 13, numpy 2, Gradio 6) no es compatible con TRELLIS ni con `requirements.txt`, así que `setup_colab.sh` no toca ese entorno: crea uno aparte con Python 3.10, PyTorch 2.4.0 + CUDA 12.1 (con un toolkit CUDA 12.1 propio para compilar), `diff-gaussian-rasterization` y `nvdiffrast` compilados para la GPU detectada, TRELLIS en un commit fijado y Blender 4.5 LTS verificado con SHA-256. Las dependencias de Python están fijadas en [`colab/requirements-colab.lock`](colab/requirements-colab.lock), generado desde [`colab/requirements-colab.in`](colab/requirements-colab.in) con `uv pip compile` (el comando está en la cabecera del lock). Requisitos: una GPU NVIDIA con unos 16 GB (una T4 va justa; L4, A100 o H100 mejor). Las GPU Blackwell («G4») no son compatibles con PyTorch 2.4 / CUDA 12.1 y el script se detiene al detectarlas.
+
+> `setup_colab.sh` omite `kaolin`, `diffoctreerast` y `vox2seq` del `setup.sh` oficial: ningún import del camino imagen → GLB los carga (solo se usan para renderizar radiance fields y entrenar). Tampoco usa `setup.sh --demo`: instala `gradio==4.44.1`, que con las dependencias actuales ni siquiera importa.
+
+### Publicar el portal en Netlify
+
+1. En Netlify: **Add new project → Import an existing project**, elige este repositorio y la rama `main`.
+2. No cambies nada: `netlify.toml` fija `base = "portal"` y `publish = "."`, y no hay comando de build. El `base` es importante: Netlify instala el `requirements.txt` que encuentre en el directorio base y, sin él, intentaría instalar el de la raíz (Gradio, numpy…), que es de la app y no del sitio.
+3. Vista previa local, sin Netlify: `python -m http.server --directory portal 8080`.
+
+### Actualizar el cuaderno y publicar una versión nueva
+
+1. Edita `colab/TRELLIS_AutoRig_Colab.ipynb` y/o `colab/LEEME.md`.
+2. Sube `BUNDLE_VERSION` y `BUNDLE_DATE` en `scripts/build_colab_zip.py`; pon `REPO_REF = "v<versión>"` en la celda 1 del cuaderno y actualiza esa versión en las URL «Abrir en Colab» (cuaderno, `portal/index.html` y este README). Las pruebas avisan si algo no coincide.
+3. Regenera el ZIP y su manifiesto con `python scripts/build_colab_zip.py` (`--check` comprueba que lo versionado está al día).
+4. Haz commit y publica la release con el ZIP como archivo adjunto:
+
+   ```bash
+   gh release create v<versión> portal/downloads/trellis-autorig-colab.zip \
+     --title "Cuaderno de Colab v<versión>" --notes "..."
+   ```
+
+   Para corregir el archivo de una release existente: `gh release upload v<versión> portal/downloads/trellis-autorig-colab.zip --clobber`.
+
 ## Pruebas
 
-Las pruebas del wrapper no requieren CUDA ni Blender:
+Las pruebas no requieren CUDA, Blender, red ni Colab:
 
 ```bash
 python -m unittest discover -s tests -v
 ```
+
+Cubren el wrapper de rigging, la construcción de la interfaz Gradio (se omite si Gradio no está instalado), el cuaderno (incluida la ejecución de sus celdas contra un Colab simulado), `setup_colab.sh`, el lockfile, el ZIP con su manifiesto y el portal con `netlify.toml`. Algunas se omiten si faltan `bash`, `git` o `tomllib`/`tomli`.

@@ -1,0 +1,28 @@
+# Portal estático de descarga del cuaderno de Colab (carpeta portal/). No hay paso de build.
+#
+# Para publicarlo: en Netlify, «Add new project → Import an existing project», elige este
+# repositorio y deja vacío el comando de build; el resto se lee de este archivo.
+
+[build]
+  # `base` hace que Netlify solo busque archivos de dependencias (package.json, requirements.txt,
+  # runtime.txt…) dentro de portal/. Sin esto instalaría el requirements.txt de la raíz (Gradio,
+  # numpy…), que pertenece a la app y no al sitio estático, y podría hacer fallar el despliegue.
+  base = "portal"
+  # Relativo a `base`: se publica el contenido de portal/.
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+    Content-Security-Policy = "default-src 'none'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+
+# El ZIP siempre se descarga; el navegador no intenta abrirlo.
+[[headers]]
+  for = "/downloads/*.zip"
+  [headers.values]
+    Content-Type = "application/zip"
+    Content-Disposition = "attachment"

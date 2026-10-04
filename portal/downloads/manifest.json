@@ -1,0 +1,22 @@
+{
+  "bytes": 6245,
+  "colab_url": "https://colab.research.google.com/github/aqdriop/Trellis-models-rig/blob/v0.1.0/colab/TRELLIS_AutoRig_Colab.ipynb",
+  "contents": [
+    {
+      "bytes": 11495,
+      "path": "trellis-autorig-colab/TRELLIS_AutoRig_Colab.ipynb"
+    },
+    {
+      "bytes": 2758,
+      "path": "trellis-autorig-colab/LEEME.md"
+    }
+  ],
+  "file": "trellis-autorig-colab.zip",
+  "github": "https://github.com/aqdriop/Trellis-models-rig",
+  "name": "trellis-autorig-colab",
+  "release_asset": "https://github.com/aqdriop/Trellis-models-rig/releases/latest/download/trellis-autorig-colab.zip",
+  "sha256": "a2509f4291922a893c9d317bac92bd7e4d9d82440547bf1e224e6776a5d50480",
+  "tag": "v0.1.0",
+  "updated": "2026-10-04",
+  "version": "0.1.0"
+}
